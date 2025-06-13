@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario sobre IA en Sistemas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .question {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            color: #555;
+        }
+        .options label {
+            display: block;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .options label:hover {
+            background-color: #f0f0f0;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .result {
+            text-align: center;
+            font-size: 1.5em;
+            color: #333;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Cuestionario: Implementaciones de IA en Sistemas (2025)</h1>
+        <div id="quiz">
+            <div class="question" id="question-text"></div>
+            <div class="options" id="options-container"></div>
+            <div class="navigation-buttons">
+                <button id="prev-button" disabled>Anterior</button>
+                <button id="next-button">Siguiente</button>
+                <button id="submit-button" style="display: none;">Finalizar</button>
+            </div>
+        </div>
+        <div class="result" id="quiz-result" style="display: none;"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "¿Cuál es una de las principales aplicaciones de la IA en ciberseguridad mencionada para el año 2025?",
+                options: [
+                    "Automatización de la contabilidad",
+                    "Detección avanzada de amenazas",
+                    "Optimización de la cadena de suministro",
+                    "Análisis de rendimiento atlético"
+                ],
+                answer: "Detección avanzada de amenazas"
+            },
+            {
+                question: "¿Qué impacto se espera de asistentes de codificación como Copilot en la productividad del desarrollador (DevEx)?",
+                options: [
+                    "Disminución de la productividad",
+                    "Mejora significativa de la productividad",
+                    "Reemplazo total de desarrolladores",
+                    "Nulo impacto"
+                ],
+                answer: "Mejora significativa de la productividad"
+            },
+            {
+                question: "¿Qué tendencia en el campo de Sistemas relacionada con la IA se conoce como MLOps?",
+                options: [
+                    "Marketing y Operaciones de Lujo",
+                    "Machine Learning Operations",
+                    "Manejo de Lenguajes de Programación",
+                    "Monitoreo de Logística y Operaciones"
+                ],
+                answer: "Machine Learning Operations"
+            },
+            {
+                question: "¿Cómo ha afectado la IA el mundo laboral en el ámbito de Sistemas, específicamente en ciberseguridad?",
+                options: [
+                    "Ha eliminado la necesidad de analistas de seguridad",
+                    "Ha permitido la detección proactiva de ataques complejos",
+                    "Ha ralentizado los procesos de respuesta a incidentes",
+                    "No ha tenido un impacto notable"
+                ],
+                answer: "Ha permitido la detección proactiva de ataques complejos"
+            },
+            {
+                question: "¿Qué beneficio principal ofrece la IA en la ciberseguridad al detectar amenazas?",
+                options: [
+                    "Aumento de falsos positivos",
+                    "Reducción del tiempo de respuesta y análisis de grandes volúmenes de datos",
+                    "Dependencia exclusiva de la intervención humana",
+                    "Mayor complejidad en la gestión de incidentes"
+                ],
+                answer: "Reducción del tiempo de respuesta y análisis de grandes volúmenes de datos"
+            },
+            {
+                question: "¿Qué es DevEx en el contexto de la productividad del desarrollador?",
+                options: [
+                    "Devolución de Experiencias",
+                    "Desarrollo de Extremidades",
+                    "Developer Experience",
+                    "Diseño de Estructuras Exactas"
+                ],
+                answer: "Developer Experience"
+            },
+            {
+                question: "¿Un asistente de codificación basado en IA puede ayudar a los desarrolladores a...?",
+                options: [
+                    "Escribir código más lento",
+                    "Generar fragmentos de código, completar funciones y detectar errores",
+                    "Evitar el uso de librerías externas",
+                    "Aumentar el tiempo de depuración"
+                ],
+                answer: "Generar fragmentos de código, completar funciones y detectar errores"
+            },
+            {
+                question: "¿Cuál es el objetivo principal de MLOps?",
+                options: [
+                    "Crear modelos de Machine Learning sin supervisión",
+                    "Establecer prácticas para desplegar y mantener modelos de ML en producción de manera eficiente",
+                    "Desarrollar nuevos algoritmos de IA",
+                    "Investigar la teoría de la información"
+                ],
+                answer: "Establecer prácticas para desplegar y mantener modelos de ML en producción de manera eficiente"
+            },
+            {
+                question: "¿Qué tipo de datos son cruciales para que la IA mejore la detección de amenazas en ciberseguridad?",
+                options: [
+                    "Datos de ventas de productos",
+                    "Registros de red, patrones de tráfico y firmas de malware",
+                    "Información de recursos humanos",
+                    "Pronósticos del clima"
+                ],
+                answer: "Registros de red, patrones de tráfico y firmas de malware"
+            },
+            {
+                question: "¿Cómo contribuye la IA a la automatización en el desarrollo de software?",
+                options: [
+                    "Eliminando la necesidad de pruebas unitarias",
+                    "Automatizando tareas repetitivas como la generación de código boilerplate y la refactorización",
+                    "Haciendo que el código sea ilegible",
+                    "Incrementando el número de errores en el código"
+                ],
+                answer: "Automatizando tareas repetitivas como la generación de código boilerplate y la refactorización"
+            },
+            {
+                question: "¿Qué ventaja competitiva ofrece la implementación de IA en la ciberseguridad de una empresa?",
+                options: [
+                    "Mayor vulnerabilidad a ataques",
+                    "Una postura de seguridad proactiva y resiliente",
+                    "Aumento de los costos de infraestructura",
+                    "Menor capacidad de respuesta"
+                ],
+                answer: "Una postura de seguridad proactiva y resiliente"
+            },
+            {
+                question: "¿Qué herramienta de IA es un ejemplo destacado de asistente de codificación?",
+                options: [
+                    "Adobe Photoshop",
+                    "Microsoft Word",
+                    "GitHub Copilot",
+                    "Google Sheets"
+                ],
+                answer: "GitHub Copilot"
+            },
+            {
+                question: "¿Qué aspecto del mundo laboral en Sistemas ha sido afectado por el auge de MLOps?",
+                options: [
+                    "La necesidad de equipos de IT y operaciones más integrados con los equipos de ciencia de datos",
+                    "La desaparición de los roles de ingeniero de software",
+                    "La disminución de la demanda de infraestructura en la nube",
+                    "El fin del desarrollo ágil"
+                ],
+                answer: "La necesidad de equipos de IT y operaciones más integrados con los equipos de ciencia de datos"
+            },
+            {
+                question: "¿En qué área de la ciberseguridad la IA puede predecir comportamientos maliciosos?",
+                options: [
+                    "Análisis financiero",
+                    "Análisis de amenazas de día cero y ataques avanzados persistentes (APT)",
+                    "Gestión de inventario",
+                    "Planificación de eventos"
+                ],
+                answer: "Análisis de amenazas de día cero y ataques avanzados persistentes (APT)"
+            },
+            {
+                question: "¿Cómo ha optimizado la IA la eficiencia en el desarrollo de software?",
+                options: [
+                    "Requiriendo más intervención manual en cada etapa del ciclo de vida del software",
+                    "Permitiendo la identificación temprana de fallos y la optimización de recursos computacionales",
+                    "Limitando la capacidad de escalabilidad",
+                    "Ignorando los principios de integración continua"
+                ],
+                answer: "Permitiendo la identificación temprana de fallos y la optimización de recursos computacionales"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        const userAnswers = new Array(questions.length).fill(null);
+
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        const submitButton = document.getElementById('submit-button');
+        const quizResult = document.getElementById('quiz-result');
+        const quizContainer = document.getElementById('quiz');
+
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionText.textContent = `${currentQuestionIndex + 1}. ${currentQuestion.question}`;
+            optionsContainer.innerHTML = '';
+            currentQuestion.options.forEach((option, index) => {
+                const label = document.createElement('label');
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'answer';
+                radio.value = option;
+                radio.checked = userAnswers[currentQuestionIndex] === option;
+                radio.onchange = () => userAnswers[currentQuestionIndex] = option;
+                label.appendChild(radio);
+                label.appendChild(document.createTextNode(option));
+                optionsContainer.appendChild(label);
+            });
+            updateNavigationButtons();
+        }
+
+        function updateNavigationButtons() {
+            prevButton.disabled = currentQuestionIndex === 0;
+            if (currentQuestionIndex === questions.length - 1) {
+                nextButton.style.display = 'none';
+                submitButton.style.display = 'inline-block';
+            } else {
+                nextButton.style.display = 'inline-block';
+                submitButton.style.display = 'none';
+            }
+        }
+
+        function showNextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            }
+        }
+
+        function showPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function calculateScore() {
+            score = 0;
+            questions.forEach((question, index) => {
+                if (userAnswers[index] === question.answer) {
+                    score++;
+                }
+            });
+            quizContainer.style.display = 'none';
+            quizResult.textContent = `Obtuviste ${score} de ${questions.length} respuestas correctas.`;
+            quizResult.style.display = 'block';
+        }
+
+        prevButton.addEventListener('click', showPreviousQuestion);
+        nextButton.addEventListener('click', showNextQuestion);
+        submitButton.addEventListener('click', calculateScore);
+
+        // Initial load
+        loadQuestion();
+    </script>
+
+    </body>
+</html>
