@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario: IA en Sistemas 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 700px;
+            width: 100%;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .quiz-header h1 {
+            color: #333;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        .quiz-header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-container {
+            display: none;
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .question {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .options {
+            list-style: none;
+        }
+
+        .option {
+            margin-bottom: 12px;
+        }
+
+        .option label {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .option label:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+        }
+
+        .option label.selected {
+            background: #667eea;
+            color: white;
+            border-color: #5a67d8;
+        }
+
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .question-counter {
+            color: #666;
+            font-size: 1em;
+        }
+
+        .results {
+            display: none;
+            text-align: center;
+            animation: bounceIn 0.6s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            color: white;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .score-text {
+            font-size: 1.4em;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .performance-message {
+            font-size: 1.2em;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .excellent { background: #d4edda; color: #155724; }
+        .good { background: #d1ecf1; color: #0c5460; }
+        .fair { background: #fff3cd; color: #856404; }
+        .poor { background: #f8d7da; color: #721c24; }
+
+        .restart-btn {
+            margin-top: 20px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1>🤖 Cuestionario: IA en Sistemas 2025</h1>
+            <p>Evalúa tus conocimientos sobre las implementaciones de IA en el campo de sistemas</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div id="quizContent">
+            <!-- Las preguntas se generarán dinámicamente aquí -->
+        </div>
+
+        <div class="quiz-controls">
+            <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" disabled>Anterior</button>
+            <span class="question-counter" id="questionCounter">Pregunta 1 de 15</span>
+            <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>Siguiente</button>
+        </div>
+
+        <div class="results" id="results">
+            <h2>¡Cuestionario Completado! 🎉</h2>
+            <div class="score-circle" id="scoreCircle">0/15</div>
+            <div class="score-text" id="scoreText">Has obtenido 0 de 15 respuestas correctas</div>
+            <div class="performance-message" id="performanceMessage"></div>
+            <button class="btn restart-btn" onclick="restartQuiz()">Reiniciar Cuestionario</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Según el Foro Económico Mundial, ¿cuál es la ganancia neta de empleos que la IA generará para 2025?",
+                options: [
+                    "25 millones de empleos",
+                    "58 millones de empleos",
+                    "75 millones de empleos",
+                    "133 millones de empleos"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué porcentaje de incremento en productividad han logrado los asistentes de codificación como GitHub Copilot?",
+                options: [
+                    "15-25%",
+                    "30-50%",
+                    "60-75%",
+                    "80-90%"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuál es el rango salarial promedio para un ML Engineer según el informe?",
+                options: [
+                    "$80,000 - $120,000 USD",
+                    "$120,000 - $180,000 USD",
+                    "$180,000 - $250,000 USD",
+                    "$250,000 - $300,000 USD"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué significa MLOps en el contexto de sistemas de IA?",
+                options: [
+                    "Machine Learning Operations",
+                    "Multiple Language Operations",
+                    "Modern Logic Operations",
+                    "Managed Learning Optimization"
+                ],
+                correct: 0
+            },
+            {
+                question: "¿Cuál es el principal desafío de la ciberseguridad en 2025 según el informe?",
+                options: [
+                    "Falta de profesionales capacitados",
+                    "Uso malicioso de IA generativa por ciberdelincuentes",
+                    "Sistemas legacy incompatibles",
+                    "Altos costos de implementación"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué porcentaje de exposición a la IA tienen las economías desarrolladas?",
+                options: [
+                    "40%",
+                    "50%",
+                    "60%",
+                    "70%"
+                ],
+                correct: 2
+            },
+            {
+                question: "¿Cuál NO es una capacidad mencionada de los asistentes de codificación modernos?",
+                options: [
+                    "Generación de funciones completas",
+                    "Documentación automática",
+                    "Traducción entre lenguajes de programación",
+                    "Gestión automática de servidores físicos"
+                ],
+                correct: 3
+            },
+            {
+                question: "¿Qué es Edge AI según las tendencias futuras mencionadas?",
+                options: [
+                    "IA que solo funciona en la nube",
+                    "Mayor procesamiento de IA en dispositivos locales",
+                    "IA especializada en detección de bordes en imágenes",
+                    "IA para redes sociales"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuál es el crecimiento anual esperado en roles relacionados con IA?",
+                options: [
+                    "15-20%",
+                    "20-25%",
+                    "25-30%",
+                    "35-40%"
+                ],
+                correct: 2
+            },
+            {
+                question: "¿Qué tipo de tareas son más susceptibles de ser automatizadas por IA?",
+                options: [
+                    "Creativas y artísticas",
+                    "Repetitivas, predecibles y basadas en reglas",
+                    "De liderazgo y gestión",
+                    "De investigación científica"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuál es una función clave de MLOps mencionada en el informe?",
+                options: [
+                    "Diseño de interfaces de usuario",
+                    "Gestión de redes sociales",
+                    "Monitoreo de modelos en producción",
+                    "Desarrollo de videojuegos"
+                ],
+                correct: 2
+            },
+            {
+                question: "¿Qué tecnología emergente combina IA con computación cuántica?",
+                options: [
+                    "Quantum-AI Hybrid",
+                    "Neural Quantum Computing",
+                    "Quantum Machine Learning",
+                    "Todas las anteriores"
+                ],
+                correct: 0
+            },
+            {
+                question: "¿Cuál es el enfoque principal de Green AI?",
+                options: [
+                    "IA para agricultura",
+                    "IA para energías renovables",
+                    "Eficiencia energética de sistemas de IA",
+                    "IA para reciclaje"
+                ],
+                correct: 2
+            },
+            {
+                question: "¿Qué rol emergente se enfoca en la seguridad y confiabilidad de sistemas de IA?",
+                options: [
+                    "AI Product Manager",
+                    "AI Safety Engineer",
+                    "Data Infrastructure Engineer",
+                    "ML Engineer"
+                ],
+                correct: 1
+            },
+            {
+                question: "Según el informe, ¿qué caracteriza a los profesionales exitosos en 2025?",
+                options: [
+                    "Especialización exclusiva en IA",
+                    "Conocimientos solo tradicionales",
+                    "Competencias híbridas combinando expertise tradicional con IA",
+                    "Experiencia únicamente en ciberseguridad"
+                ],
+                correct: 2
+            }
+        ];
+
+        let currentQuestion = 0;
+        let userAnswers = [];
+        let score = 0;
+
+        function initQuiz() {
+            currentQuestion = 0;
+            userAnswers = [];
+            score = 0;
+            displayQuestion();
+            updateUI();
+        }
+
+        function displayQuestion() {
+            const quizContent = document.getElementById('quizContent');
+            const question = questions[currentQuestion];
+            
+            quizContent.innerHTML = `
+                <div class="question-container active">
+                    <div class="question">
+                        <span class="question-number">Pregunta ${currentQuestion + 1}:</span> ${question.question}
+                    </div>
+                    <ul class="options">
+                        ${question.options.map((option, index) => `
+                            <li class="option">
+                                <label for="q${currentQuestion}_${index}">
+                                    <input type="radio" name="q${currentQuestion}" id="q${currentQuestion}_${index}" value="${index}" onchange="selectAnswer(${index})">
+                                    ${option}
+                                </label>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+
+            // Marcar respuesta previa si existe
+            if (userAnswers[currentQuestion] !== undefined) {
+                const selectedInput = document.querySelector(`input[value="${userAnswers[currentQuestion]}"]`);
+                if (selectedInput) {
+                    selectedInput.checked = true;
+                    selectedInput.parentElement.classList.add('selected');
+                }
+            }
+        }
+
+        function selectAnswer(selectedIndex) {
+            userAnswers[currentQuestion] = selectedIndex;
+            
+            // Actualizar estilos visuales
+            document.querySelectorAll('.option label').forEach(label => {
+                label.classList.remove('selected');
+            });
+            
+            const selectedLabel = document.querySelector(`input[value="${selectedIndex}"]`).parentElement;
+            selectedLabel.classList.add('selected');
+            
+            // Habilitar botón siguiente
+            document.getElementById('nextBtn').disabled = false;
+            
+            // Auto-avanzar después de 1 segundo si no es la última pregunta
+            if (currentQuestion < questions.length - 1) {
+                setTimeout(() => {
+                    nextQuestion();
+                }, 1000);
+            } else {
+                // Si es
